@@ -1,12 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import boardIcon from '../assets/icon-board.svg';
 import darkIcon from '../assets/icon-dark-theme.svg';
 import lightIcon from '../assets/icon-light-theme.svg';
 import { Switch } from '@headlessui/react';
 import useDarkMode from '../Hooks/useDarkMode';
+import boardsSlice from '../redux/boardsSlice';
 
-export default function HeaderDropdown({ setOpenDropdown }) {
+export default function HeaderDropdown({ setOpenDropdown, setBoardModalOpen }) {
+ const dispatch = useDispatch(); 
  const [ colorTheme, setTheme ] = useDarkMode();
  const [ darkSide, setDarkSide ] = React.useState(
   colorTheme === 'light' ? true : false
@@ -18,15 +20,15 @@ export default function HeaderDropdown({ setOpenDropdown }) {
  }
 
  const boards = useSelector((state) => state.boards);
+
  console.log('boards ', boards);
   return (
     <div
      className='py-10 px-6 absolute left-0 right-0 bottom-[-100vh]
       top-16 bg-[#00000080]'
-     onClick={
-      (e) => {
-       if(e.target !== currentTarget){
-        return; 
+     onClick={(e) => {
+       if(e.target !== e.currentTarget){
+        return;
        }
        setOpenDropdown(false)
       }
@@ -45,8 +47,13 @@ export default function HeaderDropdown({ setOpenDropdown }) {
        {boards.map((board, index) => (
         <div
          className={`flex items-baseline space-x-2 px-5 py-4 dark:text-white
-          ${board.isActive && 'bg-[#635fc7] rounded-r-full text-white mr-8'}`}
-         key={index}        
+          ${board.isActive && 
+            'bg-[#635fc7] rounded-r-full text-white mr-8'
+          }`}
+         key={index}
+         onClick={() => {
+          dispatch(boardsSlice.actions.setBoardActive({ index }))               
+         }}
         >
          <img src={boardIcon} alt="boardIcon" className='h-4' />
          <p className='text-lg font-bold'>{board.name}</p>
@@ -54,7 +61,12 @@ export default function HeaderDropdown({ setOpenDropdown }) {
        ))}
 
        <div
-        className='flex items-baseline space-x-2 text-[#635fc7] px-5 py-4'
+        className='flex items-baseline cursor-pointer
+          space-x-2 text-[#635fc7] px-5 py-4'
+        onClick={() => {
+          setBoardModalOpen(true)
+          setOpenDropdown(false)
+        }}
        >
         <img src={boardIcon} className='h-4' />
         <p
