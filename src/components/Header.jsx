@@ -7,15 +7,30 @@ import HeaderDropdown from './HeaderDropdown';
 import AddEditBoardModal from '../modals/AddEditBoardModal';
 import { useDispatch, useSelector } from 'react-redux';
 import AddEditTaskModal from '../modals/AddEditTaskModal';
+import ElipsIsMenu from './ElipsIsMenu';
+import DeleteModal from '../modals/DeleteModal';
 
 export default function Header({ boardModalOpen, setBoardModalOpen }){
  const dispatch = useDispatch();
  const [ openDropdown, setOpenDropdown ] = React.useState(false);
  const [ openAddEditTask, setOpenAddEditTask ] = React.useState(false);
  const [ boardType, setBoardType ] = React.useState("add");
+ const [ isElipsIsOpen, setIsElipsIsOpen ] = React.useState(false);
+ const [ isDeleteModalOpen, setIsDeleteModalOpen ] = React.useState(false);
 
  const boards = useSelector((state) => state.boards);
  const board = boards.find((board) => board.isActive);
+
+ const setOpenEditModal = () => {
+  setBoardModalOpen(true);
+  setIsElipsIsOpen(false);
+ }
+
+ const setOpenDeleteModal = () => {
+  setIsDeleteModalOpen(true);
+  setIsElipsIsOpen(false);
+ }
+
 
  return (
   <div className='p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-50 right-0'>
@@ -54,8 +69,22 @@ export default function Header({ boardModalOpen, setBoardModalOpen }){
       +
      </button>
      <img src={ellipsis} alt="ellipsis" 
+      onClick={() => {
+       setBoardType('edit')
+       setOpenDropdown(false)
+       setIsElipsIsOpen(state => !state)
+      }}
       className='cursor-pointer h-6' 
      />
+
+      {
+       isElipsIsOpen && <ElipsIsMenu
+        type='Boards' 
+        setOpenDeleteModal={setOpenDeleteModal}
+        setOpenEditModal={setOpenEditModal}
+       />
+      }
+
     </div>
 
    </header>
@@ -78,6 +107,10 @@ export default function Header({ boardModalOpen, setBoardModalOpen }){
      setOpenAddEditTask={setOpenAddEditTask}
      type='add'
     />
+   }
+
+   {
+    isDeleteModalOpen && <DeleteModal />
    }
 
   </div>
