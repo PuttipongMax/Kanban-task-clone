@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AddEditTaskModal from '../modals/AddEditTaskModal';
 import ElipsIsMenu from './ElipsIsMenu';
 import DeleteModal from '../modals/DeleteModal';
+import boardsSlice from '../redux/boardsSlice';
 
 export default function Header({ boardModalOpen, setBoardModalOpen }){
  const dispatch = useDispatch();
@@ -31,6 +32,17 @@ export default function Header({ boardModalOpen, setBoardModalOpen }){
   setIsElipsIsOpen(false);
  }
 
+ const onDeleteBtnClick = () => {
+  dispatch( boardsSlice.actions.deleteBoard())
+  dispatch(boardsSlice.actions.setBoardActive({ index : 0 }))
+  setIsDeleteModalOpen(false)
+ }
+
+ const onDropdownClick = () => {
+  setOpenDropdown( state => !state)
+  setIsElipsIsOpen(false);
+  setBoardType('add')
+ }
 
  return (
   <div className='p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-50 right-0'>
@@ -49,7 +61,7 @@ export default function Header({ boardModalOpen, setBoardModalOpen }){
       </h3>
       <img src={openDropdown ? iconUp : iconDown} alt="dropdown icon" 
        className='w-3 ml-2 md:hidden cursor-pointer'
-       onClick={() => setOpenDropdown(state => !state)}
+       onClick={onDropdownClick}
       />
      </div>
     </div>
@@ -110,7 +122,12 @@ export default function Header({ boardModalOpen, setBoardModalOpen }){
    }
 
    {
-    isDeleteModalOpen && <DeleteModal />
+    isDeleteModalOpen && <DeleteModal 
+      type='board'
+      title={<p className='text-red-500 inline'>{board.name}</p>} 
+      setIsDeleteModalOpen={setIsDeleteModalOpen} 
+      onDeleteBtnClick={onDeleteBtnClick}
+    />
    }
 
   </div>
