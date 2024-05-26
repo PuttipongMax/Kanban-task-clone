@@ -143,7 +143,7 @@ export default function AddEditBoardModal({ setBoardModalOpen, type }) {
       <div>
         <button
          className='w-full items-center hover:opacity-75 dark:text-[#635fc7]
-          mt-2 text-white dark:bg-white bg-[#635fc7] rounded-full
+          mt-2 text-white dark:bg-white bg-[#635fc7] rounded-full py-2
          '
          onClick={() => {
           setNewColumns((state) => [

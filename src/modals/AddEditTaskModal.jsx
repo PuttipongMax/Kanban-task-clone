@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import boardsSlice from '../redux/boardsSlice';
 
 export default function AddEditTaskModal({ 
- type, device, setOpenAddEditTask, taskIndex, pervColIndex = 0
+ type, device, setOpenAddEditTask, taskIndex, 
+ prevColIndex = 0, setIsTaskModalOpen
 }) {
  const dispatch = useDispatch();
  const [title, setTitle] = React.useState('');
@@ -15,15 +16,28 @@ export default function AddEditTaskModal({
  const board = useSelector((state) => state.boards).find((board) => board.isActive);
 
  const columns = board.columns;
- const col = columns.find((col, index) => index === pervColIndex)
- const [status, setStatus] = React.useState(columns[pervColIndex].name)
- const [newColIndex, setNewColIndex] = React.useState(pervColIndex)
+ const col = columns.find((col, index) => index === prevColIndex)
+ const [status, setStatus] = React.useState(columns[prevColIndex].name)
+ const [newColIndex, setNewColIndex] = React.useState(prevColIndex)
  const [subtasks, setSubtasks] = React.useState(
   [
    { title: '', isCompleted : false, id: uuidv4() },
    { title: '', isCompleted : false, id: uuidv4() }
   ]
  )
+ const [isFirstLoad, setIsFirstLoad] = React.useState(true)
+ const task = col ? col.tasks.find(( task, index ) => index === taskIndex) : []
+
+ if( type === 'edit' && isFirstLoad){
+  setSubtasks(
+    task.subtasks.map((subtask) => {
+      return { ...subtask, id: uuidv4() }
+    })
+  )
+  setTitle(task.title)
+  setDescription(task.description)
+  setIsFirstLoad(false)
+ }
 
  const onChange = (id, newValue) => {
   setSubtasks((pervState) => {
@@ -74,7 +88,7 @@ export default function AddEditTaskModal({
      subtasks,
      status,
      taskIndex,
-     pervColIndex,
+     prevColIndex,
      newColIndex
     })
    )
