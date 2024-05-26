@@ -40,7 +40,7 @@ export default function Center({ boardModalOpen, setBoardModalOpen }) {
      {
       windowSize[0] >= 768 && (
         <SideBar 
-         
+         isSideBarOpen={isSideBarOpen} setIsSideBarOpen={setIsSideBarOpen}
         />
       )
      }
